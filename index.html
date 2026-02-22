@@ -1,90 +1,392 @@
-// Данные для 3х усопших
-// Замените имена, даты и описания на нужные вам
-const memorialData = [
-    {
-        firstName: "АННА",
-        lastName: "ИВАНОВА",
-        birthDate: "15.03.1950",
-        deathDate: "22.11.2020",
-        description: "Любящая мать и бабушка. Светлый человек, даривший тепло и заботу."
-    },
-    {
-        firstName: "ДМИТРИЙ",
-        lastName: "СОКОЛОВ",
-        birthDate: "07.07.1948",
-        deathDate: "03.02.2019",
-        description: "Учитель, наставник, друг. Его мудрость и доброта останутся с нами."
-    },
-    {
-        firstName: "ЕЛЕНА",
-        lastName: "ПЕТРОВА",
-        birthDate: "23.12.1975",
-        deathDate: "10.09.2022",
-        description: "Талантливый врач, спасшая сотни жизней. Светлая память."
-    }
-];
-
-// Функция для создания карточки
-function createCard(person) {
-    // Извлекаем инициалы (первые буквы имени и фамилии)
-    const initials = person.firstName.charAt(0) + person.lastName.charAt(0);
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мемориал | Вечная память троим усопшим</title>
+    <!-- Подключение шрифтов Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     
-    // Полное имя с заглавной буквы
-    const fullName = `${person.firstName} ${person.lastName}`;
-    
-    // Формирование дат
-    const dateRange = `${person.birthDate} — ${person.deathDate}`;
-
-    // Создаем DOM элементы
-    const card = document.createElement('div');
-    card.className = 'memorial-card';
-
-    // Вставляем HTML структуру карточки
-    card.innerHTML = `
-        <div class="photo-placeholder">
-            <span class="initials">${initials}</span>
-        </div>
-        <h2 class="card-name">${fullName}</h2>
-        <p class="card-dates">${dateRange}</p>
-        <p class="card-description">${person.description}</p>
-    `;
-
-    return card;
-}
-
-// Загружаем данные на страницу после её полной загрузки
-document.addEventListener('DOMContentLoaded', function() {
-    const gridContainer = document.getElementById('memorial-grid');
-    
-    // Очищаем контейнер на всякий случай
-    gridContainer.innerHTML = '';
-    
-    // Создаем карточки для каждого человека из массива
-    memorialData.forEach(person => {
-        const card = createCard(person);
-        gridContainer.appendChild(card);
-    });
-
-    // Устанавливаем текущий год в футере
-    const yearSpan = document.getElementById('currentYear');
-    const currentYear = new Date().getFullYear();
-    yearSpan.textContent = currentYear;
-
-    // --- Интерактив: зажжение свечи ---
-    const candleBtn = document.getElementById('lightCandleBtn');
-    const flame = document.getElementById('candleFlame');
-
-    candleBtn.addEventListener('click', function() {
-        flame.classList.toggle('active');
-        
-        // Меняем текст кнопки в зависимости от состояния
-        if (flame.classList.contains('active')) {
-            candleBtn.textContent = 'Потушить свечу';
-        } else {
-            candleBtn.textContent = 'Зажечь свечу памяти';
+    <style>
+        /* Стиль для мемориального сайта - строго, светло, элегантно */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    });
-});
 
-// Небольшая дополнительная анимация или эффект при наведении можно добавить
-// Но оставим чистоту кода.
+        body {
+            background-color: #faf7f2; /* Очень светлый, теплый белый */
+            font-family: 'Inter', sans-serif;
+            color: #2c3e4f; /* Темный сине-серый для текста */
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(3px);
+            border-radius: 4px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e8e0d5;
+        }
+
+        /* Декоративный элемент в шапке (лампада) */
+        .header-ornament {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .lampada {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #f7e5c2, #d4b68a);
+            border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
+            position: relative;
+            opacity: 0.8;
+        }
+
+        .lampada::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            width: 20px;
+            height: 25px;
+            background: linear-gradient(to bottom, #fff6e0, transparent);
+            border-radius: 50%;
+            filter: blur(4px);
+        }
+
+        /* Типографика */
+        .memorial-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 600;
+            letter-spacing: 6px;
+            text-align: center;
+            color: #1e2b36;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #d4c9bc;
+            padding-bottom: 20px;
+        }
+
+        .memorial-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #5a6d7e;
+            margin-bottom: 60px;
+            font-style: italic;
+        }
+
+        /* Сетка для 3х карточек */
+        .memorial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        /* Карточка памяти */
+        .memorial-card {
+            background: #ffffff;
+            border: 1px solid #e0d6cb;
+            padding: 30px 20px 25px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+            border-radius: 0; /* строгие линии */
+        }
+
+        .memorial-card:hover {
+            border-color: #b6aa9b;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Портрет (инициалы в круге) */
+        .photo-placeholder {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: #eae3db;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            outline: 1px solid #c4b7a8;
+            outline-offset: 4px;
+        }
+
+        .initials {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.2rem;
+            font-weight: 600;
+            color: #5a4e44;
+            letter-spacing: 2px;
+        }
+
+        /* Имя */
+        .card-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #1e2b36;
+        }
+
+        /* Даты жизни */
+        .card-dates {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Короткое описание */
+        .card-description {
+            font-size: 0.95rem;
+            color: #4a5b68;
+            border-top: 1px dashed #d0c6bc;
+            padding-top: 15px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Эпитафия снизу */
+        .epitaph-section {
+            text-align: center;
+            margin: 50px 0 40px;
+            padding: 20px 0;
+            border-top: 1px solid #e2d9d0;
+            border-bottom: 1px solid #e2d9d0;
+        }
+
+        .epitaph-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            color: #4f5f6b;
+            letter-spacing: 2px;
+        }
+
+        /* Кнопка зажжения свечи */
+        .candle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0 20px;
+            gap: 20px;
+        }
+
+        .candle-button {
+            background: transparent;
+            border: 1px solid #b6aa9b;
+            color: #3f4e5a;
+            padding: 12px 40px;
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .candle-button:hover {
+            background: #e2d9d0;
+            border-color: #8e7e6e;
+            color: #1e2b36;
+        }
+
+        .candle-flame {
+            width: 20px;
+            height: 30px;
+            background: radial-gradient(circle at 50% 0%, #ffd966, #ffb347, #d18d4b);
+            border-radius: 50% 50% 20% 20%;
+            filter: blur(2px);
+            opacity: 0;
+            transition: opacity 0.5s;
+            margin-bottom: 10px;
+        }
+
+        .candle-flame.active {
+            opacity: 1;
+            animation: flicker 1.5s infinite;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
+        /* Подвал */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            font-size: 0.9rem;
+            color: #8b9aa8;
+            border-top: 1px solid #e8e0d5;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 900px) {
+            .memorial-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .memorial-title {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .memorial-grid {
+                grid-template-columns: 1fr;
+            }
+            .memorial-title {
+                font-size: 2.5rem;
+            }
+            .epitaph-text {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка с лампадой (декоративный элемент) -->
+        <div class="header-ornament">
+            <div class="lampada"></div>
+        </div>
+
+        <!-- Заголовок мемориала -->
+        <h1 class="memorial-title">Вечная память</h1>
+        <p class="memorial-subtitle">Светлая память навсегда в наших сердцах</p>
+
+        <!-- Основная сетка с карточками усопших (будет заполнена через JS) -->
+        <div class="memorial-grid" id="memorial-grid"></div>
+
+        <!-- Раздел с цитатой или эпитафией -->
+        <div class="epitaph-section">
+            <p class="epitaph-text">«Никто не забыт, ничто не забыто»</p>
+        </div>
+
+        <!-- Кнопка зажжения свечи (интерактив) -->
+        <div class="candle-container">
+            <button class="candle-button" id="lightCandleBtn">Зажечь свечу памяти</button>
+            <div class="candle-flame" id="candleFlame"></div>
+        </div>
+
+        <!-- Подвал с датой -->
+        <footer class="footer">
+            <p>С любовью и скорбью. <span id="currentYear"></span></p>
+        </footer>
+    </div>
+
+    <script>
+        // Данные для 3х усопших
+        // !!! ЗАМЕНИТЕ ЭТИ ДАННЫЕ НА СВОИ !!!
+        const memorialData = [
+            {
+                firstName: "АННА",
+                lastName: "ИВАНОВА",
+                birthDate: "15.03.1950",
+                deathDate: "22.11.2020",
+                description: "Любящая мать и бабушка. Светлый человек, даривший тепло и заботу."
+            },
+            {
+                firstName: "ДМИТРИЙ",
+                lastName: "СОКОЛОВ",
+                birthDate: "07.07.1948",
+                deathDate: "03.02.2019",
+                description: "Учитель, наставник, друг. Его мудрость и доброта останутся с нами."
+            },
+            {
+                firstName: "ЕЛЕНА",
+                lastName: "ПЕТРОВА",
+                birthDate: "23.12.1975",
+                deathDate: "10.09.2022",
+                description: "Талантливый врач, спасшая сотни жизней. Светлая память."
+            }
+        ];
+
+        // Функция для создания карточки
+        function createCard(person) {
+            // Извлекаем инициалы (первые буквы имени и фамилии)
+            const initials = person.firstName.charAt(0) + person.lastName.charAt(0);
+            
+            // Полное имя
+            const fullName = `${person.firstName} ${person.lastName}`;
+            
+            // Формирование дат
+            const dateRange = `${person.birthDate} — ${person.deathDate}`;
+
+            // Создаем DOM элемент
+            const card = document.createElement('div');
+            card.className = 'memorial-card';
+
+            // Вставляем HTML структуру карточки
+            card.innerHTML = `
+                <div class="photo-placeholder">
+                    <span class="initials">${initials}</span>
+                </div>
+                <h2 class="card-name">${fullName}</h2>
+                <p class="card-dates">${dateRange}</p>
+                <p class="card-description">${person.description}</p>
+            `;
+
+            return card;
+        }
+
+        // Загружаем данные на страницу после её полной загрузки
+        document.addEventListener('DOMContentLoaded', function() {
+            const gridContainer = document.getElementById('memorial-grid');
+            
+            // Очищаем контейнер на всякий случай
+            gridContainer.innerHTML = '';
+            
+            // Создаем карточки для каждого человека из массива
+            memorialData.forEach(person => {
+                const card = createCard(person);
+                gridContainer.appendChild(card);
+            });
+
+            // Устанавливаем текущий год в футере
+            const yearSpan = document.getElementById('currentYear');
+            const currentYear = new Date().getFullYear();
+            yearSpan.textContent = currentYear;
+
+            // --- Интерактив: зажжение свечи ---
+            const candleBtn = document.getElementById('lightCandleBtn');
+            const flame = document.getElementById('candleFlame');
+
+            candleBtn.addEventListener('click', function() {
+                flame.classList.toggle('active');
+                
+                // Меняем текст кнопки в зависимости от состояния
+                if (flame.classList.contains('active')) {
+                    candleBtn.textContent = 'Потушить свечу';
+                } else {
+                    candleBtn.textContent = 'Зажечь свечу памяти';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
