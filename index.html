@@ -1,1 +1,90 @@
+// Данные для 3х усопших
+// Замените имена, даты и описания на нужные вам
+const memorialData = [
+    {
+        firstName: "АННА",
+        lastName: "ИВАНОВА",
+        birthDate: "15.03.1950",
+        deathDate: "22.11.2020",
+        description: "Любящая мать и бабушка. Светлый человек, даривший тепло и заботу."
+    },
+    {
+        firstName: "ДМИТРИЙ",
+        lastName: "СОКОЛОВ",
+        birthDate: "07.07.1948",
+        deathDate: "03.02.2019",
+        description: "Учитель, наставник, друг. Его мудрость и доброта останутся с нами."
+    },
+    {
+        firstName: "ЕЛЕНА",
+        lastName: "ПЕТРОВА",
+        birthDate: "23.12.1975",
+        deathDate: "10.09.2022",
+        description: "Талантливый врач, спасшая сотни жизней. Светлая память."
+    }
+];
 
+// Функция для создания карточки
+function createCard(person) {
+    // Извлекаем инициалы (первые буквы имени и фамилии)
+    const initials = person.firstName.charAt(0) + person.lastName.charAt(0);
+    
+    // Полное имя с заглавной буквы
+    const fullName = `${person.firstName} ${person.lastName}`;
+    
+    // Формирование дат
+    const dateRange = `${person.birthDate} — ${person.deathDate}`;
+
+    // Создаем DOM элементы
+    const card = document.createElement('div');
+    card.className = 'memorial-card';
+
+    // Вставляем HTML структуру карточки
+    card.innerHTML = `
+        <div class="photo-placeholder">
+            <span class="initials">${initials}</span>
+        </div>
+        <h2 class="card-name">${fullName}</h2>
+        <p class="card-dates">${dateRange}</p>
+        <p class="card-description">${person.description}</p>
+    `;
+
+    return card;
+}
+
+// Загружаем данные на страницу после её полной загрузки
+document.addEventListener('DOMContentLoaded', function() {
+    const gridContainer = document.getElementById('memorial-grid');
+    
+    // Очищаем контейнер на всякий случай
+    gridContainer.innerHTML = '';
+    
+    // Создаем карточки для каждого человека из массива
+    memorialData.forEach(person => {
+        const card = createCard(person);
+        gridContainer.appendChild(card);
+    });
+
+    // Устанавливаем текущий год в футере
+    const yearSpan = document.getElementById('currentYear');
+    const currentYear = new Date().getFullYear();
+    yearSpan.textContent = currentYear;
+
+    // --- Интерактив: зажжение свечи ---
+    const candleBtn = document.getElementById('lightCandleBtn');
+    const flame = document.getElementById('candleFlame');
+
+    candleBtn.addEventListener('click', function() {
+        flame.classList.toggle('active');
+        
+        // Меняем текст кнопки в зависимости от состояния
+        if (flame.classList.contains('active')) {
+            candleBtn.textContent = 'Потушить свечу';
+        } else {
+            candleBtn.textContent = 'Зажечь свечу памяти';
+        }
+    });
+});
+
+// Небольшая дополнительная анимация или эффект при наведении можно добавить
+// Но оставим чистоту кода.
